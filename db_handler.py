@@ -16,6 +16,13 @@ from spectrogram import Spectrogram
     
 SPECTROGRAM_LOCATION = '../Downloads/data/images'
 
+"""
+This submodule was created to call process_file in 01_create_spectrograms.ipynb with multiprocessing.Pool
+
+The previous version of methods in the notebook would cause AttributeError. Solution inspired by StackOverflow:
+https://stackoverflow.com/questions/41385708/multiprocessing-example-giving-attributeerror
+"""
+
 # Given a species code, return a numeric id.
 def get_manual_id(species_code, species):
     for s in species:
