@@ -78,7 +78,7 @@ dependencies:
   - matplotlib-inline==0.1.6=pyhd8ed1ab_0
   - grpcio==1.46.3=py38h1ef021a_0
   - libcblas==3.9.0=16_osxarm64_openblas
-  - tensorflow-deps==2.10.0=0
+  # - tensorflow-deps==2.10.0=0
   - zstd==1.5.2=h8128057_4
   - asttokens==2.1.0=pyhd8ed1ab_0
   - executing==1.2.0=pyhd8ed1ab_0

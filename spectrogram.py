@@ -1,4 +1,5 @@
-# classes and methods for extracting pulses form wav file and saving them as spectrogram images
+# classes and methods for extracting pulses from wav file
+# and saving them as spectrogram images
 
 import colorsys
 import io
@@ -43,7 +44,7 @@ class Spectrogram():
                 ll[i] = ll[i]/255
             self.colors.append(tuple(ll))
 
-    def process_file(self, wav_file_name):
+    def create_from_file(self, wav_file_name):
         # Function to load .wav file and split into sampling windows.
         # File could be corrupt, surround with try except.
         try:
@@ -56,23 +57,26 @@ class Spectrogram():
             return None
 
         # Loop over file and create sampling windows.
-        for i in range(self.window_length, min(math.ceil((len(sig) / float(sr)) * 1000), self.maximum_file_length), int(self.window_length * (1 - self.overlap))):
+        for i in range(
+            self.window_length,
+            min(math.ceil((len(sig) / float(sr)) * 1000), self.maximum_file_length),
+            int(self.window_length * (1 - self.overlap))
+        ):
 
-            start = (i - self.window_length) / \
-                1000  # where to start in seconds
+            start = (i - self.window_length) / 1000  # where to start in seconds
             end = i/1000  # where to end in seconds
             # Get the portion of the signal we are interested in.
             fsig = sig[int((start * sr)):int((end * sr))]
 
             # Make a unique name for the spectrogram image.
-            metadata = self._process_window(
+            metadata = self._detect_call_in_window(
                 fsig, sr, i)
             if metadata is not None:
                 data.metadata.append(metadata)
 
         return data
 
-    def _process_window(self, sig, sr, window_offset):
+    def _detect_call_in_window(self, sig, sr, window_offset):
         # Function to take a signal and return a spectrogram.
 
         root_size = int(0.001 * sr)  # 1.0ms resolution

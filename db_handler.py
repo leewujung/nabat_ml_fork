@@ -3,19 +3,14 @@
 # With the exception of the librosa library installed above, all of these modules are 
 # either included in the code base or provided by default on Amazon Sagemaker. 
 
-import gc
-import glob
-import multiprocessing as mp
 import random
-from multiprocessing import Pool
 from pathlib import Path
 import exiftool
 
-import numpy as np
 from db import NABat_DB
 from spectrogram import Spectrogram
     
-SPECTROGRAM_LOCATION = '../Downloads/data/images'
+SPECTROGRAM_LOCATION = "/Volumes/sd4tb_1/NABat/data/images"
 
 """
 This submodule was created to call process_file in 01_create_spectrograms.ipynb with multiprocessing.Pool
@@ -25,8 +20,8 @@ https://stackoverflow.com/questions/41385708/multiprocessing-example-giving-attr
 """
 
 # Given a species code, return a numeric id.
-def get_manual_id(species_code, species):
-    for s in species:
+def get_manual_id(species_code, species_code_all):
+    for s in species_code_all:
         if s.species_code == species_code:
             return s.id
 
@@ -47,7 +42,7 @@ def get_grts_id(file_path):
 
 # This method is meant to be called in parallel and will take a single file path
 # and produce a spectrogram for each pulse detected using a BLED within the recording.
-def process_file(file, db_name="db0"):
+def process_file(file, db_name="db_test_20230911"):
     # Randomly and proprotionally assign files to the train, validate, and test sets.
     # 80% train, 10% validate, 10% test
     draw = None
@@ -61,20 +56,20 @@ def process_file(file, db_name="db0"):
       
 
     db = NABat_DB(p=db_name)
-    species = db.query('select * from species;')
+    species_code_all = db.query('select * from species;')
     
     # Get metadata about the recording from the file name.
     species_code = file.split('/')[-2]
-    manual_id = get_manual_id(species_code, species)
+    manual_id = get_manual_id(species_code, species_code_all)
     grts_id = get_grts_id(file)
-    file_name = Path(file).name.split('.')[0]
+    file_name = Path(file).stem
 
     file_path = Path('{}/{}/{}'.format(SPECTROGRAM_LOCATION, species_code, file_name))
     file_path.mkdir(parents=True, exist_ok=True)
 
     # Process file and return pulse metadata.
     spectrogram = Spectrogram()
-    d = spectrogram.process_file(file)
+    d = spectrogram.create_from_file(file)
 
     # Add the file to the database.
     file_id, draw = db.add_file(
