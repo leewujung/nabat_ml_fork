@@ -10,7 +10,7 @@ import exiftool
 from db import NABat_DB
 from spectrogram import Spectrogram
     
-SPECTROGRAM_LOCATION = "/Volumes/sd4tb_1/NABat/data/images"
+SPECTROGRAM_LOCATION = "/Users/Shared/NABat/data/images"
 
 """
 This submodule was created to call process_file in 01_create_spectrograms.ipynb with multiprocessing.Pool
