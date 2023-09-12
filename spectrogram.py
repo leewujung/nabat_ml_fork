@@ -11,7 +11,6 @@ import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-import random
 
 Metadata = namedtuple(
     "Metadata", "offset, frequency, amplitude, time, snr, window")
